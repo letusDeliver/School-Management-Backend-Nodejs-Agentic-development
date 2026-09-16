@@ -275,9 +275,23 @@ flowchart LR
 - **docker-compose.yml**: exactly two services — `backend` and `postgres` (with a persistent
   volume and a `pg_isready` health check that `backend` waits on). Cloudinary is external and
   intentionally not containerized.
-- Docker itself was not installed in the environment this foundation was authored in; the compose
-  file was validated by parsing it as YAML and reviewing the Dockerfile stage-by-stage rather than
-  with a real `docker compose build`. Run an actual build before depending on this in CI.
+- **`Dockerfile.npm`**: a placeholder/example variant of the same multi-stage layout, built with
+  npm instead of Bun, for machines that have Docker but not Bun (e.g. Windows). It is not the
+  canonical build. It intentionally uses `node:22-alpine`, not `node:20-alpine` — npm 10.8.2
+  (bundled with `node:20-alpine`) fails on this project's dependency graph with an internal
+  arborist error (`Cannot read properties of null (reading 'edgesOut')`) when installing without
+  a lockfile; npm 10.9.x (`node:22-alpine`) does not hit this. No `package-lock.json` is
+  committed (the project keeps a single lockfile, `bun.lock`), so it runs `npm install` rather
+  than `npm ci` — less reproducible, acceptable for a placeholder.
+- Docker itself is not installed in the environment this foundation was authored in, but Podman
+  (a Docker-CLI-compatible engine) was available and used to actually build and run both images:
+  `podman build` succeeded for both `Dockerfile` and `Dockerfile.npm`; each container was run
+  against a real `postgres:16-alpine` container on a shared network (mirroring what
+  `docker-compose.yml` does) and verified for `/health` (200), `/ready` (200, confirms live DB
+  connectivity from inside the container), running as the non-root `appuser`, and clean
+  `SIGTERM` shutdown (HTTP server closed → Prisma disconnected → exit 0). `docker-compose.yml`
+  itself was not run directly (no `docker compose`/`podman-compose` binary in this environment)
+  but its equivalent two-container setup was exercised manually as described above.
 
 ## 14. What Is Explicitly Out of Scope Here
 

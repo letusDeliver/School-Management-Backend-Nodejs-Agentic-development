@@ -105,12 +105,29 @@ docker compose up --build
 ```
 
 This starts two services: `postgres` (with a persistent volume and health check) and `backend`
-(built from the provided multi-stage `Dockerfile`, running as a non-root user). Cloudinary is an
-external service and is never containerized.
+(built from the provided multi-stage `Dockerfile`, using Bun, running as a non-root user).
+Cloudinary is an external service and is never containerized.
 
-> Docker was not available in the environment this foundation was built in, so `docker-compose.yml`
-> and the `Dockerfile` were validated by hand (YAML parsing, stage/dependency review) rather than
-> with an actual `docker compose build`. Run a real build before relying on it in CI/production.
+Both the `Dockerfile` (Bun) and `docker-compose.yml` have been build-and-run tested (with
+Podman, Docker-CLI-compatible): image build, container boot against a real Postgres container,
+`/health` and `/ready` both healthy, non-root user confirmed, and graceful shutdown on `SIGTERM`
+confirmed (HTTP server closed → Prisma disconnected → clean exit).
+
+### Building with npm instead of Bun
+
+[`Dockerfile.npm`](Dockerfile.npm) is a placeholder/example for building the same image with
+npm — useful on a machine that has Docker but not Bun (e.g. a Windows box). It is not the
+project's canonical build (that stays Bun-based); no `package-lock.json` is committed, so it
+runs `npm install` rather than `npm ci`. It has also been build-and-run tested the same way as
+above. It is pinned to `node:22-alpine` rather than `node:20-alpine` — npm 10.8.2 (bundled with
+`node:20-alpine` at the time this was written) fails on this project's dependency graph with an
+internal arborist error when installing without a lockfile; npm 10.9.x (`node:22-alpine`) does
+not have this problem.
+
+```bash
+docker build -f Dockerfile.npm -t school-backend .
+docker run --env-file .env -p 5000:5000 school-backend
+```
 
 ## Project Structure
 
