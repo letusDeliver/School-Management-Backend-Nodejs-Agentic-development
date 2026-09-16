@@ -1,0 +1,63 @@
+{
+  "name": "school-management-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Production-ready backend foundation for a School Management System",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "build": "echo \"No build step required for plain Node.js/ESM runtime\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push"
+  },
+  "keywords": [
+    "school-management",
+    "backend",
+    "express",
+    "prisma",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "http-errors": "^2.0.1",
+    "jsonwebtoken": "^9.0.3",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^5.0.1",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.12.0",
+    "nodemon": "^3.1.14",
+    "pino-pretty": "^13.1.3",
+    "prettier": "^3.9.7",
+    "prisma": "6.19.3",
+    "supertest": "^7.2.2",
+    "vitest": "^5.0.1"
+  }
+}

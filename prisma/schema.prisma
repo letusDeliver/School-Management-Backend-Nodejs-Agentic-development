@@ -1,0 +1,13 @@
+// Prisma schema — infrastructure only.
+// Business models (User, Student, Teacher, School, ...) are intentionally
+// not defined here yet; they will be designed in a dedicated database
+// design task. See docs/architecture.md for the rationale.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
